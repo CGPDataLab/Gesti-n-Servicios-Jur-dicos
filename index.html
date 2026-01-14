@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConsulTick Legal Gold | Prestigio Jurídico Latam</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React y Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdfcf8; color: #2d1e12; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Efecto Oro Metálico Animado */
+        .btn-gold {
+            background: linear-gradient(45deg, #4a3728, #8c6239, #4a3728);
+            background-size: 200% auto;
+            transition: 0.5s;
+        }
+        .btn-gold:hover {
+            background-position: right center;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(140, 98, 57, 0.3);
+        }
+
+        /* Scrollbar Premium */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fdfcf8; }
+        ::-webkit-scrollbar-thumb { background: #8c6239; border-radius: 10px; }
+
+        .glass-effect {
+            background: rgba(253, 252, 248, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes gold-shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #4a3728, #8c6239, #4a3728);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200% 100%;
+            animation: gold-shimmer 3s infinite linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- COMPONENTES DE ICONOS SVG (Sin dependencias externas) ---
+        const IconScale = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h18"/></svg>;
+        const IconShield = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
+        const IconGlobe = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
+        const IconMessage = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+        const IconGavel = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5 5 2 2 5-5 2 2 5-5-2-2-5 5-2-2Z"/><path d="m21 3-5 5"/><path d="m3 21 5-5"/><path d="m13 13-10-10"/></svg>;
+        const IconSend = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
+        const IconUser = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+        const IconX = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+
+        const apiKey = ""; // Gemini API Key
+
+        const App = () => {
+            const [view, setView] = React.useState('landing'); 
+            const [isChatOpen, setIsChatOpen] = React.useState(false);
+            const [leads, setLeads] = React.useState([
+                { id: 1, nombre: "Roberto Gómez", correo: "roberto@empresa.mx", tipoServicio: "Derecho Corporativo", mensaje: "Necesito blindaje para mi nueva startup.", fecha: new Date() }
+            ]);
+            const [chatMessages, setChatMessages] = React.useState([]);
+            const [formSubmitted, setFormSubmitted] = React.useState(false);
+            const [newMessage, setNewMessage] = React.useState('');
+            const [isMuted, setIsMuted] = React.useState(false);
+            const [aiAnalysisResult, setAiAnalysisResult] = React.useState({});
+            const [formData, setFormData] = React.useState({ nombre: '', correo: '', mensaje: '' });
+
+            const playSound = () => {
+                if (isMuted) return;
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.connect(gain);
+                gain.connect(audioCtx.destination);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3);
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setLeads([{ ...formData, id: Date.now(), fecha: new Date() }, ...leads]);
+                setFormSubmitted(true);
+                playSound();
+            };
+
+            const LandingView = () => (
+                <div className="animate-in">
+                    {/* Navigation */}
+                    <nav className="fixed w-full z-50 glass-effect border-b border-[#e8e3d9] py-5 px-6 md:px-12 flex justify-between items-center">
+                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setView('landing')}>
+                            <div className="bg-[#4a3728] p-2 rounded-xl text-white shadow-lg"><IconScale /></div>
+                            <span className="font-serif text-2xl font-bold text-[#2d1e12] tracking-tighter">CONSULTICK <span className="text-[#8c6239] font-light italic">GOLD</span></span>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <button onClick={() => setIsMuted(!isMuted)} className="text-[#4a3728] opacity-60 hover:opacity-100 transition">
+                                {isMuted ? '🔇' : '🔊'}
+                            </button>
+                            <button onClick={() => setView('admin')} className="text-xs font-bold uppercase tracking-widest text-[#8c6239] border-b border-[#8c6239] hover:text-[#4a3728] transition">Staff Login</button>
+                        </div>
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section className="relative pt-40 pb-24 px-6 bg-[#fdfcf8] overflow-hidden min-h-[90vh] flex flex-col justify-center">
+                        <div className="absolute top-0 right-0 opacity-[0.03] -translate-y-1/4 translate-x-1/4 rotate-12">
+                            <IconGavel />
+                        </div>
+                        <div className="max-w-6xl mx-auto relative z-10 text-center">
+                            <span className="bg-[#4a3728]/5 text-[#4a3728] px-5 py-2 rounded-full text-[10px] font-bold tracking-[0.3em] uppercase mb-8 inline-block border border-[#4a3728]/10">
+                                Boutique Jurídica Internacional
+                            </span>
+                            <h1 className="text-6xl md:text-9xl font-serif text-[#2d1e12] mb-10 leading-[1.1] tracking-tighter">
+                                Excelencia <br/> que <span className="shimmer-text italic">Trasciende</span>
+                            </h1>
+                            <p className="text-xl text-[#5d4a3a] max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+                                Protegemos su legado con la sabiduría de la tradición y la audacia de la innovación tecnológica.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+                                <a href="#contacto" className="btn-gold text-white px-12 py-5 rounded-full font-serif text-lg shadow-xl shadow-[#8c6239]/20">
+                                    Solicitar Asesoría de Élite
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Features */}
+                    <section className="py-24 px-6 bg-[#2d1e12] text-[#fdfcf8]">
+                        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-16">
+                            {[
+                                { icon: <IconShield />, title: "Seguridad Integral", desc: "Protocolos de confidencialidad de grado bancario para cada caso." },
+                                { icon: <IconGlobe />, title: "Alcance Global", desc: "Expertos en leyes regionales con base en México para toda América Latina." },
+                                { icon: <IconGavel />, title: "Litigio Estratégico", desc: "Defensa técnica impecable con visión proactiva de negocios." }
+                            ].map((item, i) => (
+                                <div key={i} className="group text-center space-y-5 hover:scale-105 transition duration-500">
+                                    <div className="mx-auto w-16 h-16 bg-[#8c6239]/20 rounded-2xl flex items-center justify-center text-[#8c6239] group-hover:bg-[#8c6239] group-hover:text-white transition-colors duration-500">
+                                        {item.icon}
+                                    </div>
+                                    <h3 className="text-2xl font-serif italic">{item.title}</h3>
+                                    <p className="text-[#a69282] font-light leading-relaxed">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Contact Form */}
+                    <section id="contacto" className="py-32 px-6 bg-[#fdfcf8]">
+                        <div className="max-w-5xl mx-auto flex flex-col md:flex-row bg-white rounded-[4rem] shadow-2xl overflow-hidden border border-[#e8e3d9]">
+                            <div className="bg-[#4a3728] p-16 text-white md:w-2/5 flex flex-col justify-between">
+                                <div>
+                                    <h2 className="text-4xl font-serif mb-6">Contáctenos</h2>
+                                    <p className="text-[#a69282] mb-12">Agende una consulta privada con nuestros socios directores.</p>
+                                </div>
+                                <div className="space-y-6 text-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-[#8c6239]"><IconGlobe /></div>
+                                        <span>Ciudad de México | Corporativo</span>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-[#8c6239]"><IconMessage /></div>
+                                        <span>consultas@consultick.gold</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-16 flex-1">
+                                {formSubmitted ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-center py-10">
+                                        <div className="w-20 h-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-6"><CheckCircle2 /></div>
+                                        <h3 className="text-3xl font-serif text-[#2d1e12]">Gracias por su Confianza</h3>
+                                        <p className="text-slate-500 mt-4">Un socio se pondrá en contacto con usted en breve.</p>
+                                        <button onClick={() => setFormSubmitted(false)} className="mt-8 text-[#8c6239] font-bold underline">Enviar otro mensaje</button>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleSubmit} className="space-y-8">
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold uppercase tracking-widest text-[#8c6239]">Nombre</label>
+                                                <input required className="w-full border-b border-[#e8e3d9] py-3 outline-none focus:border-[#8c6239] transition" value={formData.nombre} onChange={e => setFormData({...formData, nombre: e.target.value})} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold uppercase tracking-widest text-[#8c6239]">Email</label>
+                                                <input required type="email" className="w-full border-b border-[#e8e3d9] py-3 outline-none focus:border-[#8c6239] transition" value={formData.correo} onChange={e => setFormData({...formData, correo: e.target.value})} />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-bold uppercase tracking-widest text-[#8c6239]">Su Situación Jurídica</label>
+                                            <textarea rows="4" className="w-full bg-[#fdfcf8] border border-[#e8e3d9] rounded-3xl p-6 outline-none focus:border-[#8c6239] transition resize-none" value={formData.mensaje} onChange={e => setFormData({...formData, mensaje: e.target.value})} />
+                                        </div>
+                                        <button className="btn-gold w-full text-white py-6 rounded-full font-serif text-xl">Iniciar Evaluación</button>
+                                    </form>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+
+            const AdminView = () => (
+                <div className="pt-32 px-6 md:px-20 max-w-7xl mx-auto pb-20">
+                    <div className="flex justify-between items-center mb-16 border-b border-[#e8e3d9] pb-8">
+                        <div>
+                            <h1 className="text-5xl font-serif text-[#2d1e12]">Centro de Mando</h1>
+                            <p className="text-[#8c6239] font-bold tracking-[0.2em] uppercase text-[10px] mt-2 italic">ConsulTick Gold Executive Panel</p>
+                        </div>
+                        <button onClick={() => setView('landing')} className="bg-[#2d1e12] text-white px-8 py-4 rounded-full font-serif flex items-center gap-2 hover:bg-[#4a3728] transition">
+                            Cerrar Sesión
+                        </button>
+                    </div>
+
+                    <div className="grid lg:grid-cols-3 gap-12">
+                        <div className="lg:col-span-2 space-y-6">
+                            <h2 className="text-xl font-bold uppercase tracking-widest text-[#8c6239]">Prospectos por Atender</h2>
+                            {leads.map(lead => (
+                                <div key={lead.id} className="bg-white p-8 rounded-[2.5rem] border border-[#e8e3d9] shadow-sm hover:shadow-xl transition flex flex-col md:flex-row justify-between items-start gap-6">
+                                    <div className="space-y-3">
+                                        <h3 className="text-2xl font-serif text-[#2d1e12]">{lead.nombre}</h3>
+                                        <p className="text-xs text-slate-400 font-mono">{lead.correo}</p>
+                                        <div className="p-4 bg-[#fdfcf8] rounded-2xl italic text-sm text-[#5d4a3a]">"{lead.mensaje}"</div>
+                                    </div>
+                                    <button className="bg-[#8c6239] text-white px-6 py-3 rounded-2xl font-bold text-xs hover:bg-[#4a3728] transition whitespace-nowrap">Gestionar Caso</button>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-6">
+                            <div className="bg-[#4a3728] p-8 rounded-[2.5rem] text-white text-center shadow-2xl">
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-60 mb-4">Total de Casos</p>
+                                <p className="text-7xl font-serif italic">{leads.length}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen">
+                    {view === 'landing' ? <LandingView /> : <AdminView />}
+
+                    {/* Chat Floating Premium */}
+                    <div className="fixed bottom-10 right-10 z-[1000]">
+                        {isChatOpen && (
+                            <div className="mb-6 w-[400px] max-w-[90vw] h-[600px] bg-white rounded-[3rem] shadow-2xl border border-[#e8e3d9] flex flex-col overflow-hidden animate-in">
+                                <div className="bg-[#2d1e12] p-8 text-[#fdfcf8] flex justify-between items-center">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-[#8c6239] rounded-2xl flex items-center justify-center"><IconUser /></div>
+                                        <div>
+                                            <p className="font-serif text-lg leading-none">Asesor Senior</p>
+                                            <p className="text-[10px] text-[#a69282] uppercase tracking-widest mt-2 flex items-center gap-2">
+                                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Disponible
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setIsChatOpen(false)}><IconX /></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50">
+                                    <div className="bg-[#e8e3d9] text-[#2d1e12] p-5 rounded-3xl rounded-tl-none text-sm font-medium leading-relaxed">
+                                        Bienvenido a ConsulTick Legal. ¿En qué podemos asesorarle hoy bajo la confidencialidad de nuestra firma?
+                                    </div>
+                                    {chatMessages.map(m => (
+                                        <div key={m.id} className={`flex ${m.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`p-4 rounded-3xl text-sm max-w-[85%] shadow-md ${m.isAdmin ? 'bg-[#4a3728] text-white rounded-tr-none' : 'bg-white border text-[#2d1e12] rounded-tl-none'}`}>
+                                                {m.text}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <form onSubmit={sendChat} className="p-8 bg-white border-t border-[#e8e3d9] flex gap-3">
+                                    <input className="flex-1 bg-[#fdfcf8] border-none rounded-2xl px-6 py-4 text-sm outline-none focus:ring-1 focus:ring-[#8c6239]" placeholder="Escriba su consulta..." value={newMessage} onChange={e => setNewMessage(e.target.value)} />
+                                    <button className="bg-[#8c6239] text-white p-4 rounded-2xl shadow-xl hover:bg-[#4a3728] transition"><IconSend /></button>
+                                </form>
+                            </div>
+                        )}
+                        <button onClick={() => { setIsChatOpen(!isChatOpen); playSound(); }} className="w-20 h-20 rounded-[2.5rem] bg-[#4a3728] text-white flex items-center justify-center shadow-2xl hover:scale-105 transition-all">
+                            {isChatOpen ? <IconX /> : <IconMessage />}
+                        </button>
+                    </div>
+
+                    <footer className="bg-white py-20 px-12 border-t border-[#e8e3d9]">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-[#4a3728] p-2 rounded-xl text-white"><IconScale /></div>
+                                <span className="font-serif text-2xl font-bold text-[#2d1e12]">CONSULTICK <span className="text-[#8c6239]">GOLD</span></span>
+                            </div>
+                            <div className="text-center md:text-right">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#8c6239] mb-3">Diseño Arquitectónico FullStack</p>
+                                <p className="font-serif text-2xl text-[#2d1e12] mb-1">Cesar Pardo</p>
+                                <p className="text-[10px] text-slate-400">© 2024 ConsulTick Legal Network. Ciudad de México.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
